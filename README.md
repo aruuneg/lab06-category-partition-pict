@@ -22,23 +22,39 @@
 
 
 
-\## Давуу эрэмбэ
+\## Алдааны давуу эрэмбэ
 
 
 
-Нэг хүсэлтэд олон алдаа зэрэг орсон тохиолдолд дараах эрэмбээр алдаа буцна гэж үзэв.
+Нэг хүсэлтэд хэд хэдэн алдаа зэрэг орсон тохиолдолд дараах эрэмбээр алдаа буцна гэж үзэв.
 
 
 
 ```text
 
-from → to → amount
+ERROR\_NO\_FROM
+
+→ ERROR\_FROZEN
+
+→ ERROR\_NO\_TO
+
+→ ERROR\_SAME\_ACCOUNT
+
+→ ERROR\_BAD\_AMOUNT
+
+→ ERROR\_INSUFFICIENT
+
+→ ERROR\_LIMIT
 
 ```
 
 
 
-Үндэслэл: эхлээд эх данс хүчинтэй эсэхийг шалгахгүйгээр бусад нөхцөлийг үнэлэх боломжгүй.
+\### Үндэслэл
+
+
+
+Эх данс байхгүй эсвэл царцаагдсан үед бусад нөхцөлийг шалгах боломжгүй тул хамгийн түрүүнд `from` данстай холбоотой алдаанууд шалгагдана. Дараа нь `to` дансны нөхцөл, хамгийн сүүлд мөнгөн дүнтэй холбоотой нөхцөлүүд шалгагдана.
 
 
 
@@ -90,15 +106,15 @@ from → to → amount
 
 | Утга | Тэмдэглэгээ | Тайлбар |
 
-|--------|--------|--------|
+|----------|----------|----------|
 
-| Frozen | ERROR | Шилжүүлэг хийх боломжгүй |
+| Frozen | ERROR | Царцаагдсан данснаас шилжүүлэг хийх боломжгүй |
 
 | Missing (From) | ERROR | Эх данс байхгүй |
 
-| Missing (To) | ERROR | Хүлээн авагч байхгүй |
+| Missing (To) | ERROR | Хүлээн авагч данс байхгүй |
 
-| SameAsFrom | ERROR | Өөртөө шилжүүлэх боломжгүй |
+| SameAsFrom | ERROR | Өөрийн данс руу шилжүүлэх боломжгүй |
 
 | Zero | ERROR | Amount > 0 байх ёстой |
 
@@ -106,11 +122,11 @@ from → to → amount
 
 | OverLimit | ERROR | Өдрийн лимит давсан |
 
-| Currency=Different | SINGLE | Хөрвүүлэлт хийх тохиолдол |
+| Currency=Different | SINGLE | Валют хөрвүүлэлттэй тусгай нөхцөл |
 
-| From=Missing | IF | Amount нөхцөл ач холбогдолгүй |
+| From=Missing | IF | Amount утга ач холбогдолгүй болно |
 
-| To=Missing | IF | Amount нөхцөл ач холбогдолгүй |
+| To=Missing | IF | Amount утга ач холбогдолгүй болно |
 
 
 
@@ -122,19 +138,29 @@ from → to → amount
 
 
 
-Параметрийн бүх боломжит хослол:
+Бүрэн олонлог:
 
 
 
 ```text
 
-3 × 3 × 4 × 2 = 72
+From      = 3
+
+To        = 3
+
+Amount    = 4
+
+Currency  = 2
+
+
+
+Нийт = 3 × 3 × 4 × 2 = 72
 
 ```
 
 
 
-Хязгаарлалтууд хэрэглэсний дараа:
+Хязгаарлалтын дараа зарим логикийн хувьд боломжгүй хослолууд хасагдана.
 
 
 
@@ -146,7 +172,7 @@ from → to → amount
 
 
 
-Тестлэх шаардлагатай тохиолдлын тоо буурсан.
+Ингэснээр тестлэх шаардлагатай орчны тоо буурна.
 
 
 
@@ -164,27 +190,27 @@ from → to → amount
 
 | 1 | Valid | Valid | Normal | Same | 201 OK |
 
-| 2 | Frozen | Valid | Normal | Same | ERROR\_FROZEN |
+| 2 | Valid | Valid | Normal | Different | 201 OK |
 
-| 3 | Missing | Valid | Normal | Same | ERROR\_NO\_FROM |
+| 3 | Frozen | Valid | Normal | Same | ERROR\_FROZEN |
 
-| 4 | Valid | Missing | Normal | Same | ERROR\_NO\_TO |
+| 4 | Missing | Valid | Normal | Same | ERROR\_NO\_FROM |
 
-| 5 | Valid | SameAsFrom | Normal | Same | ERROR\_SAME\_ACCOUNT |
+| 5 | Valid | Missing | Normal | Same | ERROR\_NO\_TO |
 
-| 6 | Valid | Valid | Zero | Same | ERROR\_BAD\_AMOUNT |
+| 6 | Valid | SameAsFrom | Normal | Same | ERROR\_SAME\_ACCOUNT |
 
-| 7 | Valid | Valid | OverBalance | Same | ERROR\_INSUFFICIENT |
+| 7 | Valid | Valid | Zero | Same | ERROR\_BAD\_AMOUNT |
 
-| 8 | Valid | Valid | OverLimit | Same | ERROR\_LIMIT |
+| 8 | Valid | Valid | OverBalance | Same | ERROR\_INSUFFICIENT |
 
-| 9 | Valid | Valid | Normal | Different | 201 OK |
+| 9 | Valid | Valid | OverLimit | Same | ERROR\_LIMIT |
 
-| 10 | Frozen | SameAsFrom | OverLimit | Different | ERROR\_FROZEN |
+|10 | Frozen | SameAsFrom | OverLimit | Different | ERROR\_FROZEN |
 
-| 11 | Missing | Missing | Normal | Different | ERROR\_NO\_FROM |
+|11 | Missing | Missing | Normal | Different | ERROR\_NO\_FROM |
 
-| 12 | Valid | Missing | OverLimit | Same | ERROR\_NO\_TO |
+|12 | Valid | Missing | OverBalance | Same | ERROR\_NO\_TO |
 
 
 
@@ -202,15 +228,15 @@ from → to → amount
 
 ```text
 
-Content: Allow, Restrict, Block
+Content:   Allow, Restrict, Block
 
-Cookies: Allow, Restrict, Block
+Cookies:   Allow, Restrict, Block
 
-Popups: Yes, No
+Popups:    Yes, No
 
-Addons: Yes, No
+Addons:    Yes, No
 
-Attacks: Yes, No
+Attacks:   Yes, No
 
 Forgeries: Yes, No
 
@@ -226,9 +252,9 @@ Forgeries: Yes, No
 
 
 
-| Model | Мөрийн тоо |
+| Хувилбар | Мөрийн тоо |
 
-|---------|---------|
+|----------|-----------|
 
 | 2-way | 10 |
 
@@ -238,11 +264,11 @@ Forgeries: Yes, No
 
 
 
-\### Greedy тайлбар
+\### Greedy алгоритмын тайлбар
 
 
 
-Бүрэн олонлог нь:
+Бүрэн олонлогийн хэмжээ:
 
 
 
@@ -254,11 +280,7 @@ Forgeries: Yes, No
 
 
 
-болно.
-
-
-
-PICT нь 2-way covering array-г ердөө 10 мөр, 3-way covering array-г 20 мөрөөр үүсгэсэн. Энэ нь бүрэн олонлогоос мэдэгдэхүйц бага боловч PICT нь greedy алгоритм ашигладаг тул хамгийн бага мөрийн тоо өгнө гэсэн баталгаа байхгүй. Иймээс лекц дээр гараар боловсруулсан хувилбараас илүү мөр үүсгэх боломжтой.
+PICT нь pairwise хамралтыг хангахын тулд ердөө 10 мөр үүсгэсэн. 3-way үед 20 мөр болсон. Энэ нь бүрэн олонлогоос мэдэгдэхүйц бага тоо юм. Гэсэн хэдий ч PICT нь greedy алгоритм ашигладаг тул хамгийн бага мөрийн тоо өгнө гэсэн баталгаа байхгүй. Тиймээс гараар боловсруулсан хүснэгтээс олон мөр өгөх боломжтой.
 
 
 
@@ -270,67 +292,31 @@ PICT нь 2-way covering array-г ердөө 10 мөр, 3-way covering array-г 
 
 
 
-\### transfer-nc.model
+\### Мөрийн тооны харьцуулалт
 
 
 
-| Model | Мөрийн тоо |
-
-|---------|---------|
-
-| transfer-nc | 13 |
-
-
-
-\### transfer.model
-
-
-
-| Model | Мөрийн тоо |
-
-|---------|---------|
-
-| transfer | 13 |
-
-
-
-\### transfer-neg.model
-
-
-
-| Model | Мөрийн тоо |
-
-|---------|---------|
-
-| transfer-neg | 16 |
-
-
-
-\---
-
-
-
-\## Харьцуулалт
-
-
-
-| Хувилбар | Мөрийн тоо |
+| Модель | Мөрийн тоо |
 
 |----------|-----------|
 
-| Browser 2-way | 10 |
+| transfer-nc.model | 13 |
 
-| Browser 3-way | 20 |
+| transfer.model | 13 |
 
-| Transfer NC | 13 |
-
-| Transfer Constraint | 13 |
-
-| Transfer Negative | 16 |
+| transfer-neg.model | 16 |
 
 
 
-`transfer-neg.model` дээр `\~` тэмдэг ашигласнаар нэг мөрөнд олон алдаа зэрэг оролцох магадлал багассан. Энэ нь error masking-ийг бууруулж, category-partition дахь ERROR утгуудтай дүйцэж байна.
+\### Ажиглалт
+
+
+
+`transfer.model` нь хязгаарлалттай боловч pairwise generation үед мөрийн тоо өөрчлөгдөөгүй.
+
+
+
+`transfer-neg.model` дээр `\~` тэмдэг ашигласнаар нэг мөрөнд олон ERROR утга давхардах боломж буурсан. Ингэснээр error masking багасч, category-partition дахь ERROR утгуудтай ойролцоо тестүүд үүссэн.
 
 
 
@@ -342,7 +328,7 @@ PICT нь 2-way covering array-г ердөө 10 мөр, 3-way covering array-г 
 
 
 
-\## Test Case 1 - Happy Path
+\## Test Case 1 — Happy Path
 
 
 
@@ -382,6 +368,14 @@ Currency=Same
 
 
 
+```http
+
+201
+
+```
+
+
+
 ```json
 
 {
@@ -394,23 +388,11 @@ Currency=Same
 
 
 
-HTTP:
-
-
-
-```text
-
-201
-
-```
-
-
-
 \---
 
 
 
-\## Test Case 2 - Missing Source Account
+\## Test Case 2 — Эх данс байхгүй
 
 
 
@@ -418,7 +400,7 @@ HTTP:
 
 
 
-Эх данс байхгүй.
+Эх данс бүртгэлгүй.
 
 
 
@@ -460,7 +442,7 @@ Currency=Same
 
 
 
-\## Test Case 3 - Same Account
+\## Test Case 3 — Ижил данс руу шилжүүлэх
 
 
 
@@ -468,7 +450,7 @@ Currency=Same
 
 
 
-Ижил данс руу шилжүүлэх оролдлого.
+Эх болон хүлээн авагч данс ижил.
 
 
 
@@ -510,11 +492,33 @@ Currency=Different
 
 
 
+\# Category-Partition ба PICT-ийн харьцуулалт
+
+
+
+| Category-Partition | PICT |
+
+|----------|----------|
+
+| Алдааны семантик сайн илэрхийлдэг | Pairwise хамралтыг баталгаажуулдаг |
+
+| Business rule тодорхойлох боломжтой | Автоматаар тест үүсгэдэг |
+
+| Гар ажиллагаа ихтэй | Хурдан covering array гаргадаг |
+
+| Error oracle тодорхойлоход тохиромжтой | Хослолын хамралтад тохиромжтой |
+
+
+
+\---
+
+
+
 \# Дүгнэлт
 
 
 
-Энэхүү лабораторийн ажлаар Category-Partition болон Pairwise Test Design гэсэн хоёр өөр тест сонголтын аргыг практикт хэрэглэж үзлээ. Category-Partition арга нь спецификаци доторх нөхцөлүүдийг задлан ангилж, тестийн оролтуудыг системтэй тодорхойлох боломж олгосон. Тухайн аргаар алдааны ангилал, төлөөлөх утгууд болон хязгаарлалтуудыг тодорхойлсон. PICT ашигласнаар бүх боломжит хослолыг турших шаардлагагүйгээр pairwise хамралтыг хангах боломжтой болсон. Browser моделийн хувьд бүрэн олонлог 144 мөр байсан ч PICT 2-way үед 10 мөр, 3-way үед 20 мөр үүсгэсэн. Transfer моделийн хувьд хязгаарлалт болон сөрөг утгуудыг тусгаж олон хослолыг автоматаар үүсгэв. `\~` тэмдэглэгээ ашиглах нь олон алдаа нэг мөрөнд давхцах эрсдэлийг бууруулдаг болохыг ажигласан. Category-Partition нь алдааны семантик болон бизнес дүрмийг илүү сайн илэрхийлдэг. Харин PICT нь хосын хамралтыг автоматаар хангаж тестийн тоог бууруулах давуу талтай. Энэ лабораторийн хамгийн их бодол шаардсан хэсэг нь хязгаарлалт болон давуу эрэмбийг зөв тодорхойлох ажил байлаа.
+Энэхүү лабораторийн ажлаар Category-Partition болон Pairwise Test Design гэсэн хоёр өөр аргыг практикт хэрэгжүүллээ. Category-Partition арга нь системийн оролтыг ангилан, төлөөлөх утгууд болон алдааны ангиллыг тодорхойлох боломж олгосон. Мөн хязгаарлалтуудыг тодорхойлсноор бодит бус тестийн хослолуудыг эрт шатанд хасаж чадсан. PICT хэрэгслийг ашигласнаар бүх боломжит хослолыг турших шаардлагагүйгээр pairwise хамралтыг автоматаар үүсгэж чадлаа. Browser моделийн хувьд бүрэн олонлог 144 байсан боловч PICT 2-way үед ердөө 10 мөр, 3-way үед 20 мөр үүсгэсэн. Transfer моделийн хувьд сөрөг утгуудыг `\~` тэмдэглэгээгээр тодорхойлсноор error masking буурсан. Category-Partition нь business rule болон алдааны семантикийг илүү сайн илэрхийлдэг болох нь харагдсан. Харин PICT нь хосын хамралтыг маш хурдан хангаж, тестийн тоог бууруулах давуу талтай байлаа. Хамгийн их бодол шаардсан хэсэг нь давуу эрэмбэ болон хязгаарлалтыг зөв тодорхойлох ажил байсан. Энэхүү лабораторийн үр дүнд тест дизайн хийх хоёр өөр аргын давуу болон сул талыг харьцуулан ойлгож авлаа.
 
 
 
