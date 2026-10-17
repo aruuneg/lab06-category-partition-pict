@@ -1,560 +1,343 @@
-\# Лаборатори №6: Тест тохиолдол боловсруулах — Category-Partition ба PICT
+# Лаборатори №6: Тест тохиолдол боловсруулах — Category-Partition ба PICT
 
+## Оюутны мэдээлэл
 
+- Нэр: ANAR BATBOLD
+- Код: B170910823
+- Хичээл: F.CSA313 Программ хангамжийн чанарын баталгаа ба тест
 
-\## Оюутны мэдээлэл
+---
 
+# Хэсэг A: Category-Partition — Шилжүүлгийн функц
 
-
-\- Нэр: ANAR BATBOLD
-
-\- Код: B170910823
-
-\- Хичээл: F.CSA313 Программ хангамжийн чанарын баталгаа ба тест
-
-
-
-\---
-
-
-
-\# Хэсэг A: Category-Partition — Шилжүүлгийн функц
-
-
-
-\## Алдааны давуу эрэмбэ
-
-
+## Алдааны давуу эрэмбэ
 
 Нэг хүсэлтэд хэд хэдэн алдаа зэрэг орсон тохиолдолд дараах эрэмбээр алдаа буцна гэж үзэв.
 
-
-
 ```text
-
-ERROR\_NO\_FROM
-
-→ ERROR\_FROZEN
-
-→ ERROR\_NO\_TO
-
-→ ERROR\_SAME\_ACCOUNT
-
-→ ERROR\_BAD\_AMOUNT
-
-→ ERROR\_INSUFFICIENT
-
-→ ERROR\_LIMIT
-
+ERROR_NO_FROM
+→ ERROR_FROZEN
+→ ERROR_NO_TO
+→ ERROR_SAME_ACCOUNT
+→ ERROR_BAD_AMOUNT
+→ ERROR_INSUFFICIENT
+→ ERROR_LIMIT
 ```
 
+### Үндэслэл
 
+Эх данс байхгүй эсвэл царцаагдсан үед бусад нөхцөлийг шалгах боломжгүй тул хамгийн түрүүнд from данстай холбоотой нөхцөлүүдийг шалгана. Дараа нь хүлээн авагч данс, хамгийн сүүлд мөнгөн дүнтэй холбоотой нөхцөлүүдийг шалгана.
 
-\### Үндэслэл
+---
 
-
-
-Эх данс байхгүй эсвэл царцаагдсан үед бусад нөхцөлийг шалгах боломжгүй тул хамгийн түрүүнд `from` данстай холбоотой алдаанууд шалгагдана. Дараа нь `to` дансны нөхцөл, хамгийн сүүлд мөнгөн дүнтэй холбоотой нөхцөлүүд шалгагдана.
-
-
-
-\---
-
-
-
-\## Сонголт ба төлөөлөх утгууд
-
-
+## Сонголт ба төлөөлөх утгууд
 
 | Параметр | Сонголт | Төлөөлөх утга |
-
 |----------|----------|----------|
-
 | From | Valid | Хүчинтэй данс |
-
 | From | Frozen | Царцаагдсан данс |
-
 | From | Missing | Байхгүй данс |
-
 | To | Valid | Хүчинтэй данс |
-
 | To | Missing | Байхгүй данс |
-
 | To | SameAsFrom | Ижил данс |
-
 | Amount | Normal | Хэвийн дүн |
-
-| Amount | Zero | 0 эсвэл сөрөг дүн |
-
+| Amount | Zero | 0 эсвэл түүнээс бага |
 | Amount | OverBalance | Үлдэгдлээс их |
-
 | Amount | OverLimit | Өдрийн лимитээс их |
-
 | Currency | Same | Ижил валют |
-
 | Currency | Different | Өөр валют |
 
+---
 
-
-\---
-
-
-
-\## Хязгаарлалтууд
-
-
+## Хязгаарлалтууд
 
 | Утга | Тэмдэглэгээ | Тайлбар |
-
 |----------|----------|----------|
-
-| Frozen | ERROR | Царцаагдсан данснаас шилжүүлэг хийх боломжгүй |
-
+| Frozen | ERROR | Царцаагдсан данс |
 | Missing (From) | ERROR | Эх данс байхгүй |
-
 | Missing (To) | ERROR | Хүлээн авагч данс байхгүй |
-
-| SameAsFrom | ERROR | Өөрийн данс руу шилжүүлэх боломжгүй |
-
-| Zero | ERROR | Amount > 0 байх ёстой |
-
+| SameAsFrom | ERROR | Өөрийн данс руу шилжүүлэх |
+| Zero | ERROR | Amount ≤ 0 |
 | OverBalance | ERROR | Үлдэгдэл хүрэлцэхгүй |
-
 | OverLimit | ERROR | Өдрийн лимит давсан |
+| Currency=Different | SINGLE | Валют хөрвүүлэлт шаардагдана |
+| From=Missing | IF | Amount утга ач холбогдолгүй |
+| To=Missing | IF | Amount утга ач холбогдолгүй |
 
-| Currency=Different | SINGLE | Валют хөрвүүлэлттэй тусгай нөхцөл |
+---
 
-| From=Missing | IF | Amount утга ач холбогдолгүй болно |
+## Бүрэн олонлог ба хязгаарлалтын дараах тоо
 
-| To=Missing | IF | Amount утга ач холбогдолгүй болно |
+Параметрүүдийн боломжит утгууд:
 
-
-
-\---
-
-
-
-\## Бүрэн олонлог ба хязгаарлалтын дараах тоо
-
-
+```text
+From      = 3
+To        = 3
+Amount    = 4
+Currency  = 2
+```
 
 Бүрэн олонлог:
 
-
-
 ```text
-
-From      = 3
-
-To        = 3
-
-Amount    = 4
-
-Currency  = 2
-
-
-
-Нийт = 3 × 3 × 4 × 2 = 72
-
+3 × 3 × 4 × 2 = 72
 ```
 
-
-
-Хязгаарлалтын дараа зарим логикийн хувьд боломжгүй хослолууд хасагдана.
-
-
+Хязгаарлалтууд:
 
 ```text
-
-72 → 60
-
+IF From = Missing THEN Amount = Normal
+IF To = Missing THEN Amount = Normal
 ```
 
+From эсвэл To нь Missing үед Amount-ийн бусад утгууд логикийн утгагүй болно.
 
+Мөн:
 
-Ингэснээр тестлэх шаардлагатай орчны тоо буурна.
+```text
+Currency = Different
+```
 
+утгыг SINGLE нөхцөл болгож үзсэн.
 
+Иймээс бодит туршилтад шаардлагагүй болон утгагүй хослолууд хасагдсанаар:
 
-\---
+```text
+72 → ойролцоогоор 60
+```
 
+болно.
 
+---
 
-\## Спецификацийн хүснэгт
-
-
+## Спецификацийн хүснэгт
 
 | # | From | To | Amount | Currency | Хүлээгдэх үр дүн |
-
 |---|---|---|---|---|---|
-
 | 1 | Valid | Valid | Normal | Same | 201 OK |
-
 | 2 | Valid | Valid | Normal | Different | 201 OK |
+| 3 | Frozen | Valid | Normal | Same | ERROR_FROZEN |
+| 4 | Missing | Valid | Normal | Same | ERROR_NO_FROM |
+| 5 | Valid | Missing | Normal | Same | ERROR_NO_TO |
+| 6 | Valid | SameAsFrom | Normal | Same | ERROR_SAME_ACCOUNT |
+| 7 | Valid | Valid | Zero | Same | ERROR_BAD_AMOUNT |
+| 8 | Valid | Valid | OverBalance | Same | ERROR_INSUFFICIENT |
+| 9 | Valid | Valid | OverLimit | Same | ERROR_LIMIT |
+|10 | Frozen | SameAsFrom | OverLimit | Different | ERROR_FROZEN |
+|11 | Missing | Missing | Normal | Different | ERROR_NO_FROM |
+|12 | Valid | Missing | OverBalance | Same | ERROR_NO_TO |
+|13 | Valid | Valid | Normal | Different | 201 OK (Currency Conversion) |
 
-| 3 | Frozen | Valid | Normal | Same | ERROR\_FROZEN |
+---
 
-| 4 | Missing | Valid | Normal | Same | ERROR\_NO\_FROM |
+# Хэсэг B: PICT
 
-| 5 | Valid | Missing | Normal | Same | ERROR\_NO\_TO |
-
-| 6 | Valid | SameAsFrom | Normal | Same | ERROR\_SAME\_ACCOUNT |
-
-| 7 | Valid | Valid | Zero | Same | ERROR\_BAD\_AMOUNT |
-
-| 8 | Valid | Valid | OverBalance | Same | ERROR\_INSUFFICIENT |
-
-| 9 | Valid | Valid | OverLimit | Same | ERROR\_LIMIT |
-
-|10 | Frozen | SameAsFrom | OverLimit | Different | ERROR\_FROZEN |
-
-|11 | Missing | Missing | Normal | Different | ERROR\_NO\_FROM |
-
-|12 | Valid | Missing | OverBalance | Same | ERROR\_NO\_TO |
-
-
-
-\---
-
-
-
-\# Хэсэг B: PICT
-
-
-
-\## Browser Model
-
-
+## Browser Model
 
 ```text
-
 Content:   Allow, Restrict, Block
-
 Cookies:   Allow, Restrict, Block
-
 Popups:    Yes, No
-
 Addons:    Yes, No
-
 Attacks:   Yes, No
-
 Forgeries: Yes, No
-
 ```
 
+---
 
-
-\---
-
-
-
-\## Browser Model Results
-
-
+## Browser Model Results
 
 | Хувилбар | Мөрийн тоо |
-
 |----------|-----------|
-
 | 2-way | 10 |
-
 | 3-way | 20 |
-
 | Full Combination | 144 |
 
+### Greedy алгоритмын тайлбар
 
-
-\### Greedy алгоритмын тайлбар
-
-
-
-Бүрэн олонлогийн хэмжээ:
-
-
+Бүрэн олонлог:
 
 ```text
-
 3 × 3 × 2 × 2 × 2 × 2 = 144
-
 ```
 
+PICT нь 2-way covering array-г 10 мөрөөр, 3-way covering array-г 20 мөрөөр үүсгэсэн. Энэ нь бүрэн олонлогоос хамаагүй бага байна. Гэсэн хэдий ч PICT нь greedy алгоритм ашигладаг тул хамгийн бага боломжит мөрийн тоог үргэлж гаргана гэсэн баталгаа байхгүй.
 
+---
 
-PICT нь pairwise хамралтыг хангахын тулд ердөө 10 мөр үүсгэсэн. 3-way үед 20 мөр болсон. Энэ нь бүрэн олонлогоос мэдэгдэхүйц бага тоо юм. Гэсэн хэдий ч PICT нь greedy алгоритм ашигладаг тул хамгийн бага мөрийн тоо өгнө гэсэн баталгаа байхгүй. Тиймээс гараар боловсруулсан хүснэгтээс олон мөр өгөх боломжтой.
+## Transfer Model Comparison
 
+| Model | Rows | Happy Path Present | Max Errors Per Row | Constraints Needed |
+|---------|---------|---------|---------|---------|
+| transfer-nc | 13 | Yes | Multiple | Yes |
+| transfer | 13 | Yes | Multiple | Yes |
+| transfer-neg | 16 | Yes | One | Less Important |
 
+### Analysis
 
-\---
+transfer-nc болон transfer моделуудын зарим мөрөнд хэд хэдэн алдаа зэрэг орсон байна.
 
-
-
-\## Transfer Models
-
-
-
-\### Мөрийн тооны харьцуулалт
-
-
-
-| Модель | Мөрийн тоо |
-
-|----------|-----------|
-
-| transfer-nc.model | 13 |
-
-| transfer.model | 13 |
-
-| transfer-neg.model | 16 |
-
-
-
-\### Ажиглалт
-
-
-
-`transfer.model` нь хязгаарлалттай боловч pairwise generation үед мөрийн тоо өөрчлөгдөөгүй.
-
-
-
-`transfer-neg.model` дээр `\~` тэмдэг ашигласнаар нэг мөрөнд олон ERROR утга давхардах боломж буурсан. Ингэснээр error masking багасч, category-partition дахь ERROR утгуудтай ойролцоо тестүүд үүссэн.
-
-
-
-\---
-
-
-
-\# PICT гаралтаас бодит тест кейсүүд
-
-
-
-\## Test Case 1 — Happy Path
-
-
-
-\### Setup
-
-
-
-\- Эх данс хүчинтэй
-
-\- Хүлээн авагч хүчинтэй
-
-\- Үлдэгдэл хүрэлцээтэй
-
-\- Өдрийн лимит хүрэлцээтэй
-
-
-
-\### Input
-
-
+Жишээ:
 
 ```text
-
-From=Valid
-
-To=Valid
-
-Amount=Normal
-
-Currency=Same
-
+Missing + Missing + OverBalance
 ```
 
+Энэ нь error masking үүсгэж болно.
 
+transfer-neg моделд `~` тэмдэг ашигласнаар нэг мөрөнд хамгийн ихдээ нэг сөрөг утга орсон тул error masking буурсан. Тиймээс transfer-neg нь Category-Partition дахь ERROR утгуудтай илүү ойролцоо болсон.
 
-\### Oracle
+---
 
+# PICT гаралтаас бодит тест кейсүүд
 
+## Test Case 1 – Happy Path
 
-```http
+### PICT Row
 
+```text
+Valid | Valid | Normal | Same
+```
+
+### Setup
+
+```text
+Source account exists
+Destination account exists
+Balance = 100000 MNT
+Daily limit remaining = 1000000 MNT
+```
+
+### Request
+
+```json
+{
+  "from": "ACC001",
+  "to": "ACC002",
+  "amount": 10000,
+  "currency": "MNT"
+}
+```
+
+### Oracle
+
+HTTP:
+
+```text
 201
-
 ```
 
-
+Response:
 
 ```json
-
 {
-
-&#x20; "result": "OK"
-
+  "result": "OK"
 }
-
 ```
 
+---
 
+## Test Case 2 – Missing Source Account
 
-\---
-
-
-
-\## Test Case 2 — Эх данс байхгүй
-
-
-
-\### Setup
-
-
-
-Эх данс бүртгэлгүй.
-
-
-
-\### Input
-
-
+### PICT Row
 
 ```text
-
-From=Missing
-
-To=Valid
-
-Amount=Normal
-
-Currency=Same
-
+Missing | Valid | Normal | Same
 ```
 
-
-
-\### Oracle
-
-
-
-```json
-
-{
-
-&#x20; "result": "ERROR\_NO\_FROM"
-
-}
-
-```
-
-
-
-\---
-
-
-
-\## Test Case 3 — Ижил данс руу шилжүүлэх
-
-
-
-\### Setup
-
-
-
-Эх болон хүлээн авагч данс ижил.
-
-
-
-\### Input
-
-
+### Setup
 
 ```text
-
-From=Valid
-
-To=SameAsFrom
-
-Amount=Normal
-
-Currency=Different
-
+Source account does not exist
+Destination account exists
 ```
 
-
-
-\### Oracle
-
-
+### Request
 
 ```json
-
 {
-
-&#x20; "result": "ERROR\_SAME\_ACCOUNT"
-
+  "from": "BAD001",
+  "to": "ACC002",
+  "amount": 10000,
+  "currency": "MNT"
 }
-
 ```
 
+### Oracle
 
+```json
+{
+  "result": "ERROR_NO_FROM"
+}
+```
 
-\---
+---
 
+## Test Case 3 – Same Account
 
+### PICT Row
 
-\# Category-Partition ба PICT-ийн харьцуулалт
+```text
+Valid | SameAsFrom | Normal | Different
+```
 
+### Setup
 
+```text
+Source and destination accounts are identical
+```
+
+### Request
+
+```json
+{
+  "from": "ACC001",
+  "to": "ACC001",
+  "amount": 10000,
+  "currency": "USD"
+}
+```
+
+### Oracle
+
+```json
+{
+  "result": "ERROR_SAME_ACCOUNT"
+}
+```
+
+---
+
+# Category-Partition ба PICT-ийн харьцуулалт
 
 | Category-Partition | PICT |
-
 |----------|----------|
+| Алдааны семантик сайн илэрхийлдэг | Pairwise хамралт баталгаажуулдаг |
+| Business rule ойлгоход тохиромжтой | Автоматаар тест үүсгэдэг |
+| Гар ажиллагаа ихтэй | Хурдан |
+| Oracle тодорхойлоход сайн | Coverage сайтай |
 
-| Алдааны семантик сайн илэрхийлдэг | Pairwise хамралтыг баталгаажуулдаг |
+---
 
-| Business rule тодорхойлох боломжтой | Автоматаар тест үүсгэдэг |
+# Дүгнэлт
 
-| Гар ажиллагаа ихтэй | Хурдан covering array гаргадаг |
+Энэхүү лабораторийн ажлаар Category-Partition болон Pairwise Test Design гэсэн хоёр өөр аргыг практикт хэрэгжүүллээ. Category-Partition арга нь тестийн оролтуудыг ангилж, бизнес дүрмүүдийг системтэйгээр задлан шинжлэх боломж олгосон. Мөн [ERROR], [SINGLE], [IF] тэмдэглэгээг ашиглан боломжгүй болон утгагүй нөхцөлүүдийг ялгаж чадсан. PICT хэрэгсэл нь pairwise covering array автоматаар үүсгэж тестийн тоог мэдэгдэхүйц багасгасан. Browser моделийн хувьд бүрэн олонлог 144 мөр байсан боловч PICT 2-way үед 10 мөр, 3-way үед 20 мөр болгож бууруулсан. Transfer моделийн хувьд хязгаарлалтууд болон сөрөг утгуудыг ашигласнаар илүү утга бүхий тестүүд үүсэх боломжтой болсон. transfer-neg моделд `~` ашигласнаар error masking багассан. Category-Partition нь алдааны семантик болон бизнес дүрмийг илэрхийлэхэд илүү тохиромжтой байсан. Харин PICT нь хамралтыг баталгаажуулж тестийн тоог багасгах давуу талтай байв. Энэхүү лабораторийн явцад хамгийн их бодол шаардсан хэсэг нь хязгаарлалтууд болон давуу эрэмбийг зөв тодорхойлох ажил байлаа.
 
-| Error oracle тодорхойлоход тохиромжтой | Хослолын хамралтад тохиромжтой |
+---
 
-
-
-\---
-
-
-
-\# Дүгнэлт
-
-
-
-Энэхүү лабораторийн ажлаар Category-Partition болон Pairwise Test Design гэсэн хоёр өөр аргыг практикт хэрэгжүүллээ. Category-Partition арга нь системийн оролтыг ангилан, төлөөлөх утгууд болон алдааны ангиллыг тодорхойлох боломж олгосон. Мөн хязгаарлалтуудыг тодорхойлсноор бодит бус тестийн хослолуудыг эрт шатанд хасаж чадсан. PICT хэрэгслийг ашигласнаар бүх боломжит хослолыг турших шаардлагагүйгээр pairwise хамралтыг автоматаар үүсгэж чадлаа. Browser моделийн хувьд бүрэн олонлог 144 байсан боловч PICT 2-way үед ердөө 10 мөр, 3-way үед 20 мөр үүсгэсэн. Transfer моделийн хувьд сөрөг утгуудыг `\~` тэмдэглэгээгээр тодорхойлсноор error masking буурсан. Category-Partition нь business rule болон алдааны семантикийг илүү сайн илэрхийлдэг болох нь харагдсан. Харин PICT нь хосын хамралтыг маш хурдан хангаж, тестийн тоог бууруулах давуу талтай байлаа. Хамгийн их бодол шаардсан хэсэг нь давуу эрэмбэ болон хязгаарлалтыг зөв тодорхойлох ажил байсан. Энэхүү лабораторийн үр дүнд тест дизайн хийх хоёр өөр аргын давуу болон сул талыг харьцуулан ойлгож авлаа.
-
-
-
-\---
-
-
-
-\# Хавсаргасан файлууд
-
-
+# Хавсаргасан файлууд
 
 ```text
-
 browser.model
-
 transfer-nc.model
-
 transfer.model
-
 transfer-neg.model
 
-
-
 results/
-
 ├── pict-build.txt
-
 ├── browser-2way.txt
-
 ├── browser-3way.txt
-
 ├── transfer-nc.txt
-
 ├── transfer.txt
-
 └── transfer-neg.txt
-
 ```
-
